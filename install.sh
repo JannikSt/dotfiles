@@ -25,8 +25,9 @@ link_dotfile() {
     echo "✓ Linked $1"
 }
 
-# Link tmux config
+# Link dotfiles
 link_dotfile ".tmux.conf"
+link_dotfile ".gitconfig"
 
 # Install tmux if not present
 if ! command -v tmux &> /dev/null; then
@@ -52,9 +53,44 @@ else
     echo "✓ tmux already installed"
 fi
 
+# Install git if not present
+if ! command -v git &> /dev/null; then
+    echo "📥 Installing git..."
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        if command -v brew &> /dev/null; then
+            brew install git
+        else
+            echo "⚠️  Homebrew not found. Please install git manually."
+        fi
+    elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        if command -v apt-get &> /dev/null; then
+            sudo apt-get update && sudo apt-get install -y git
+        elif command -v yum &> /dev/null; then
+            sudo yum install -y git
+        else
+            echo "⚠️  Package manager not found. Please install git manually."
+        fi
+    fi
+else
+    echo "✓ git already installed"
+fi
+
+# Test SSH connection to GitHub (using agent forwarding)
+echo ""
+echo "🔑 Testing GitHub SSH connection..."
+if ssh -T git@github.com 2>&1 | grep -q "successfully authenticated"; then
+    echo "✓ GitHub SSH authentication working!"
+else
+    echo "⚠️  GitHub SSH test failed"
+    echo "   Make sure you're using SSH agent forwarding: ssh -A user@host"
+    echo "   Or add your SSH key to GitHub: https://github.com/settings/keys"
+fi
+
 echo ""
 echo "✨ Dotfiles setup complete!"
 echo "📝 Your old dotfiles have been backed up with .backup extension"
+echo ""
+echo "⚠️  Don't forget to update your email in ~/.gitconfig"
 echo ""
 echo "To apply tmux config, either:"
 echo "  • Start a new tmux session: tmux"

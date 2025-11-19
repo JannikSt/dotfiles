@@ -4,15 +4,38 @@ Personal dotfiles for quick machine setup.
 
 ## Quick Start
 
-Clone and install on any new machine:
+**On a new remote machine** (with SSH agent forwarding):
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/dotfiles.git ~/dotfiles
+# Connect with agent forwarding to use your local SSH keys
+ssh -A user@remote-host
+
+# Clone and install
+git clone git@github.com:YOUR_USERNAME/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 ./install.sh
+
+# Update your email in .gitconfig
+vim ~/.gitconfig  # Change the email field
 ```
 
+The install script will:
+- Symlink all dotfiles to your home directory
+- Install git and tmux if missing
+- Test GitHub SSH connectivity
+- Back up any existing configs
+
 ## What's Included
+
+### Git Configuration (`.gitconfig`)
+- Sensible defaults for user, editor, and pull behavior
+- Default branch: `main`
+- Auto-setup remote on push
+- Useful aliases: `st`, `co`, `br`, `ci`, `lg` (pretty log)
+- Color output enabled
+- Fetch pruning enabled
+
+**Note:** Update your email address in `.gitconfig` after installation!
 
 ### Tmux Configuration (`.tmux.conf`)
 - Mouse support enabled
@@ -44,10 +67,31 @@ tmux unbind C-Space && tmux set -g prefix C-b && tmux bind C-b send-prefix
 2. Update `install.sh` to symlink it
 3. Commit and push
 
+## SSH Agent Forwarding
+
+To use your local SSH keys on remote machines:
+
+```bash
+# Connect with agent forwarding
+ssh -A user@remote-host
+
+# Verify it's working
+ssh -T git@github.com
+```
+
+To make agent forwarding default for specific hosts, add to `~/.ssh/config`:
+
+```
+Host your-remote-server
+    ForwardAgent yes
+```
+
 ## Structure
 
 ```
 dotfiles/
+├── .gitconfig       # Git configuration
+├── .gitignore       # Ignore backup files
 ├── .tmux.conf       # Tmux configuration
 ├── install.sh       # Setup script
 └── README.md        # This file
