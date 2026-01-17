@@ -1,7 +1,5 @@
 # dotfiles
 
-Quick setup on new machines:
-
-```bash
-git clone https://github.com/jannikstraube/dotfiles.git ~/.dotfiles && ~/.dotfiles/setup.sh
+```
+curl -sL https://raw.githubusercontent.com/JannikSt/dotfiles/master/install.sh | bash
 ```
